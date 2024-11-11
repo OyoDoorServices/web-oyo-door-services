@@ -1,5 +1,5 @@
 import express from "express";
-import { otpSendToUser, verifyOtpToUser } from "../controllers/User";
+import {  otpSendToUser, verifyOtpToUser } from "../controllers/User";
 
 
 const app = express.Router();
