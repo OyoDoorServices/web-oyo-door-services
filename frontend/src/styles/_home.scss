@@ -1,0 +1,79 @@
+.loaderpage {
+    width: 100vw; /* Full width of the viewport */
+    overflow-y: auto; /* Allow vertical scrolling */
+    position: relative; /* Position relative for any absolute children */
+  }
+  
+  .images {
+    text-align: center; /* Center align the images */
+  }
+  
+  .images img {
+    max-width: 100%; /* Responsive image */
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  .dots {
+    text-align: center; /* Center align the dots */
+    margin: 10px 0; /* Margin for spacing */
+  }
+  
+  .dot {
+    display: inline-block; /* Display dots inline */
+    width: 10px; /* Width of each dot */
+    height: 10px; /* Height of each dot */
+    border-radius: 50%; /* Circular dots */
+    background-color: #bbb; /* Default dot color */
+    margin: 0 5px; /* Spacing between dots */
+    cursor: pointer; /* Pointer cursor on hover */
+  }
+  
+  .dot.active {
+    background-color: #717171; /* Active dot color */
+  }
+  
+  .servicesmain {
+    padding: 20px; /* Padding around services section */
+  }
+  
+  .heading {
+    text-align: center; /* Center align heading */
+    margin-bottom: 20px;
+    color: orange; /* Space below the heading */
+  }
+  
+  .services {
+    display: grid; /* Use grid layout for services */
+    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
+    gap: 20px; /* Space between service boxes */
+  }
+  
+  .service-box {
+    cursor: pointer; /* Change cursor to pointer on hover */
+    border: 1px solid #ddd; /* Border for service boxes */
+    padding: 10px; /* Space inside the service box */
+    text-align: center; /* Center align text and images */
+    transition: background-color 0.3s; /* Smooth background transition */
+    border-radius: 5px; /* Optional rounded corners */
+  }
+  
+  .service-box:hover {
+    background-color: #f9f9f9; /* Change background on hover */
+  }
+  
+  .service-box img {
+    max-width: 100%; /* Ensure images fit within the box */
+    height: 200px; /* Maintain aspect ratio */
+    border-radius: 5px; /* Optional rounded corners for images */
+  }
+  
+  .dropdown {
+    display: none; /* Hidden by default */
+  }
+  
+  .service-box.active .dropdown {
+    display: block; /* Show dropdown text when active */
+    margin-top: 10px; /* Space above the text */
+    color: #555; /* Text color */
+  }
+  
