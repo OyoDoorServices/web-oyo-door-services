@@ -1,33 +1,62 @@
-import './App.css';
-import Footer from './components/Footer';
-import Header from './components/Header';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { Suspense, lazy, useEffect } from "react";
+import { Toaster } from "react-hot-toast";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Footer from "./components/Footer";
+import Header from "./components/Header";
+import Loader from "./components/Loader";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { useDispatch, useSelector } from "react-redux";
+import { userReducerInitialState } from "./types/reducerTypes";
+import { userExist } from "./redux/reducer/userReducer";
 
-// Create a separate component to hold the main app logic
-const AppContent = () => {
-  const location = useLocation();
+//lazy loading
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+
+function App() {
+  const dispatch = useDispatch();
+  const { user } = useSelector(
+    (state: { userReducer: userReducerInitialState }) => state.userReducer
+  );
+  useEffect(() => {
+    const checkAuthState = async () => {
+      const localUser = localStorage.getItem("user");
+      if (localUser) {
+        try {
+          const user = JSON.parse(localUser);
+          dispatch(userExist(user));
+        } catch (error) {
+          console.error("Error parsing local user:", error);
+          localStorage.removeItem("user");
+        }
+      }
+    };
+
+    checkAuthState();
+  }, [dispatch]);
 
   return (
     <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/sign_in" element={<Login />} />
-      </Routes>
-      {location.pathname === '/' && <Footer />}
+      <Router>
+        <Header />
+        <Suspense fallback={<Loader />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute isAuthenticated={user ? false : true}>
+                  <Login />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+          <Toaster position="top-center" />
+        </Suspense>
+        <Footer />
+      </Router>
     </>
   );
-};
-
-// Wrap the AppContent component inside Router
-const App = () => {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
-};
+}
 
 export default App;

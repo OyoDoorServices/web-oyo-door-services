@@ -1,16 +1,33 @@
-import logo from '../assets/logo.png';
-import { useNavigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
+import logo from "../assets/logo.png";
+import { useNavigate } from "react-router-dom";
+import { userReducerInitialState } from "../types/reducerTypes";
+import { useEffect, useRef, useState } from "react";
+import Logout from "./Logout";
 
 const Header = () => {
+  const { user } = useSelector(
+    (state: { userReducer: userReducerInitialState }) => state.userReducer
+  );
   const navigate = useNavigate();
+  const profileRef = useRef<HTMLDivElement | null>(null);
+  const [showLogout, setShowLogout] = useState(false);
 
-  const onHomeClick = () => {
-    navigate('/');
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (
+      profileRef.current &&
+      !profileRef.current.contains(event.target as Node)
+    ) {
+      setShowLogout(false);
+    }
   };
 
-  const onLoginClick = () => {
-    navigate('/sign_in');
-  };
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   return (
     <div className="navbar">
@@ -18,9 +35,29 @@ const Header = () => {
         <img src={logo} alt="logo" />
       </div>
       <div className="buttons">
-        <button className="Homebutton" onClick={onHomeClick}>Home</button>
+        <button className="Homebutton" onClick={() => navigate("/")}>
+          Home
+        </button>
         <button className="Servicebutton">Services</button>
-        <button className="Loginbutton" onClick={onLoginClick}>Login</button>
+        {user ? (
+          <>
+            <div ref={profileRef} style={{ position: "relative" }}>
+              <img
+                className="user-photo"
+                src={`${user.photo}`}
+                alt="user photo"
+                onClick={() => setShowLogout((prev) => !prev)}
+              />
+              {showLogout && <Logout />}
+            </div>
+          </>
+        ) : (
+          <>
+            <button className="Loginbutton" onClick={() => navigate("/login")}>
+              Login
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

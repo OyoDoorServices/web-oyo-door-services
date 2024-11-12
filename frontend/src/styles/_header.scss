@@ -1,95 +1,108 @@
-/* Header.css */
+/* _header.scss */
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-  
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    display: flex;
-    justify-content: space-between;
-    height: 10vh;
-    align-items: center;
-    padding: 10px 10px;
-    background-color:whitesmoke;
-    border-bottom: 1px solid #ddd;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-  }
-  
-  .logo img {
-    height: 50px;
-    width: auto;
-  }
-  
-  .buttons {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .Homebutton, .Servicebutton, .Loginbutton {
-    background: none;
-    border: none;
-    font-size: 16px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 10vh;
+  padding: 0 20px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.logo img {
+  height: 45px;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.Homebutton,
+.Servicebutton,
+.Loginbutton {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #333;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+}
+
+.Homebutton:hover,
+.Servicebutton:hover,
+.Loginbutton:hover {
+  color: #007bff;
+}
+
+.user-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #007bff;
+  object-fit: cover;
+  &:hover {
     cursor: pointer;
-    color: #333;
-    padding: 8px 12px;
-    transition: color 0.3s ease;
   }
-  
-  .Homebutton:hover, .Servicebutton:hover, .Loginbutton:hover {
-    color: #007bff;
+}
+
+/* Responsive Styles */
+
+/* Medium screens (tablets) */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 15px;
   }
-  
-  /* Responsive Styles */
-  
-  /* Medium screens (tablets) */
-  @media (max-width: 768px) {
-    .navbar {
-      padding: 8px 15px; /* Reduce padding for smaller screens */
-    }
-  
-    .logo img {
-      height: 40px; /* Reduce logo size */
-    }
-  
-    .buttons {
-      gap: 10px; /* Reduce button spacing */
-    }
-  
-    .Homebutton, .Servicebutton, .Loginbutton {
-      font-size: 14px; /* Reduce font size */
-      padding: 6px 10px; /* Reduce button padding */
-    }
+
+  .logo img {
+    height: 35px;
   }
-  
-  /* Small screens (mobile) */
-  @media (max-width: 480px) {
-    .navbar {
-      flex-direction: column; /* Stack logo and buttons vertically */
-      align-items: flex-start;
-      padding: 10px; /* Adjust padding */
-    }
-  
-    .logo img {
-      height: 35px;
-      margin-bottom: 10px; /* Add some spacing below the logo */
-    }
-  
-    .buttons {
-      width: 100%; /* Take up full width for alignment */
-      justify-content: space-around; /* Space out buttons evenly */
-      gap: 5px;
-    }
-  
-    .Homebutton, .Servicebutton, .Loginbutton {
-      font-size: 14px;
-      padding: 6px 8px;
-    }
+
+  .Homebutton,
+  .Servicebutton,
+  .Loginbutton {
+    font-size: 14px;
+    padding: 6px 10px;
   }
-  
+}
+
+/* Small screens (mobile) */
+@media (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+  }
+
+  .logo img {
+    height: 35px;
+    margin-bottom: 10px;
+  }
+
+  .buttons {
+    width: 100%;
+    justify-content: space-around;
+  }
+
+  .Homebutton,
+  .Servicebutton,
+  .Loginbutton {
+    font-size: 14px;
+    padding: 6px 8px;
+  }
+}
