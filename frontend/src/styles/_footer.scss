@@ -1,50 +1,79 @@
-/* Reset */
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
-  
-  .footer {
-    padding: 20px;
-    background-color: #f8f9fa;
-  }
-  
-  .footer-buttons {
-    display: flex;
-    gap: 100px;
-    margin-bottom: 20px;
-  }
-  
-  .footer-buttons button {
-    padding: 10px 20px;
-    font-size: 1em;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .footer-buttons button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Contact Info and Services Styling */
-  .contactinfo, .about-us {
-    color: #333;
-    margin-top: 20px;
-  }
-  
-  .about-us ul {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .about-us ul li {
-    margin-bottom: 5px;
-  }
-  
+body, html {
+  height: 100%;
+  overflow-x: hidden;
+  margin: 0;
+}
+.footer-container {
+  height: auto;
+  overflow: hidden;
+  padding: 40px 20px;
+  background-color: #1d1f21;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.footer-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+
+.footer-section {
+  width: 30%;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.footer-section h3 {
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  color: #ff6f61;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+  font-size: 1em;
+}
+
+.footer-section ul li {
+  margin: 8px 0;
+  color: #ddd;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.footer-section ul li:hover {
+  color: #ff6f61;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 1.5em;
+}
+
+.social-icons svg {
+  color: #ddd;
+  transition: color 0.3s;
+}
+
+.social-icons svg:hover {
+  color: #ff6f61;
+}
+
+.footer-bottom {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 1em;
+  color: #ddd;
+}
