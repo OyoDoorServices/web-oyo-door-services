@@ -135,7 +135,7 @@ const Login = () => {
       <div className="form-group">
         <label htmlFor="pincode">Pincode</label>
         <input
-          type="number"
+          type="tel"
           id="pincode"
           minLength={6}
           maxLength={6}

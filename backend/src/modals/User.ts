@@ -38,11 +38,6 @@ const schema = new mongoose.Schema(
     Pincode: {
       type:Number,
       required:[true,"please enter your area's pincode"],
-      validate:{
-        validator:function(pin:number){
-          return /^\d{6}$/.test(pin.toString());            
-        }
-      }
     },
     photo: {
       type: String,
