@@ -11,6 +11,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneno, setPhoneno] = useState("");
+  const[pincode,setpincode]=useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -24,6 +25,7 @@ const Login = () => {
           name: trimmedUsername,
           email,
           phoneNumber: phoneno,
+          Pincode:pincode
         }
       );
 
@@ -32,6 +34,7 @@ const Login = () => {
         setName("");
         setEmail("");
         setPhoneno("");
+        setpincode("");
         const userData = response.data.user;
         dispatch(userExist(userData));
         localStorage.setItem("user", JSON.stringify(userData));
@@ -41,6 +44,7 @@ const Login = () => {
         setName("");
         setEmail("");
         setPhoneno("");
+        setpincode("");
       }
     } catch (error) {
       toast.error("INTERNAL SERVER ERROR");
@@ -128,7 +132,23 @@ const Login = () => {
         />
       </div>
 
-      <div id="recaptcha"></div>
+      <div className="form-group">
+        <label htmlFor="pincode">Pincode</label>
+        <input
+          type="number"
+          id="pincode"
+          minLength={6}
+          maxLength={6}
+          required
+          placeholder="Enter pincode"
+          value={pincode}
+          onChange={(e) => {
+            setpincode(e.target.value);
+          }}
+        />
+      </div>
+
+      
 
       <button type="submit" className="btn-signup">
         Sign Up

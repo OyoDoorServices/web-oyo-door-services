@@ -8,7 +8,7 @@ export const newUserController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { name, email, phoneNumber, photo } = req.body;
+    const { name, email, phoneNumber,Pincode, photo } = req.body;
     let user = await User.findOne({ email });
     if (user) {
       if (photo) {
@@ -22,13 +22,14 @@ export const newUserController = async (
       });
     }
 
-    if (!name || !email || !phoneNumber)
+    if (!name || !email || !phoneNumber || !Pincode)
       return next(new ErrorHandler("Please add all fields", 400));
 
     user = await User.create({
       name,
       email,
       phoneNumber,
+      Pincode
     });
 
     return res.status(201).json({
