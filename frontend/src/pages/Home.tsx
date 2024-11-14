@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ac from '../assets/AC.jpeg';
 import painting from "../assets/Interior and Exterior Painting Waterloo.jpeg"
 import cleaning from "../assets/cleaning.jpeg"
 import delivery from "../assets/delivery.jpeg"
 import mechanic from "../assets/mechanic.jpeg"
 import physiotherapy from '../assets/physiotherapy.jpeg';
-
 
 const Home = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -31,41 +30,50 @@ const Home = () => {
   };
 
   const handleServiceClick = (id: number) => {
-    setActiveService(activeService === id ? null : id); // Toggle active service
+    setActiveService(activeService === id ? null : id);
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImage((prevImage) => (prevImage + 1) % imagesList.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="loaderpage">
-      <div className="images">
-        <img src={imagesList[currentImage].src} alt={imagesList[currentImage].alt} />
-      </div>
-      <div className="dots">
-        {imagesList.map((_, index) => (
-          <div
-            key={index}
-            className={`dot ${currentImage === index ? 'active' : ''}`}
-            onClick={() => handleDotClick(index)}
-          ></div>
-        ))}
-      </div>
-      <div className='servicesmain'>
-        <h3 className='heading'>Some of our services</h3>
-        <div className='services'>
-          {servicesList.map(service => (
-            <div
-              key={service.id}
-              className={`service-box ${activeService === service.id ? 'active' : ''}`}
-              onClick={() => handleServiceClick(service.id)}
-            >
-              <img src={service.imgSrc} alt={`Service ${service.id}`} />
-              <div className={`dropdown ${activeService === service.id ? 'active' : ''}`}>
-                {service.text}
-              </div>
-            </div>
-          ))}
+    <div className="home-loaderpage">
+  <div className="home-images">
+    <img src={imagesList[currentImage].src} alt={imagesList[currentImage].alt} />
+  </div>
+  <div className="home-dots">
+    {imagesList.map((_, index) => (
+      <div
+        key={index}
+        className={`home-dot ${currentImage === index ? 'active' : ''}`}
+        onClick={() => handleDotClick(index)}
+      ></div>
+    ))}
+  </div>
+  <div className='home-servicesmain'>
+    <h3 className='home-heading'>Some of our services</h3>
+    <div className='home-services'>
+      {servicesList.map(service => (
+        <div
+          key={service.id}
+          className={`home-service-box ${activeService === service.id ? 'active' : ''}`}
+          onClick={() => handleServiceClick(service.id)}
+        >
+          <img src={service.imgSrc} alt={`Service ${service.id}`} />
+          <div className={`home-dropdown ${activeService === service.id ? 'active' : ''}`}>
+            {service.text}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
+  </div>
+</div>
+
   );
 };
 

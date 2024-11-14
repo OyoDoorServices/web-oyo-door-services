@@ -1,79 +1,116 @@
-.loaderpage {
-    width: 100vw; /* Full width of the viewport */
-    overflow-y: auto; /* Allow vertical scrolling */
-    position: relative; /* Position relative for any absolute children */
+.home-loaderpage {
+  width: 100vw;
+  overflow-x: hidden;
+  position: relative;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.home-images {
+  margin-top: 55px;
+  position: relative;
+  width: 100vw;
+  height: 80vh;
+  overflow: hidden;
+}
+
+.home-images img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+.home-dots {
+  text-align: center;
+  margin: 10px 0;
+}
+
+.home-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #bbb;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s ease;
+}
+
+.home-dot.active {
+  background-color: #717171;
+  transform: scale(1.2);
+}
+
+.home-servicesmain {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 20px;
+  animation: fadeInUp 1s ease-in-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .images {
-    text-align: center; /* Center align the images */
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .images img {
-    max-width: 100%; /* Responsive image */
-    height: auto; /* Maintain aspect ratio */
-  }
-  
-  .dots {
-    text-align: center; /* Center align the dots */
-    margin: 10px 0; /* Margin for spacing */
-  }
-  
-  .dot {
-    display: inline-block; /* Display dots inline */
-    width: 10px; /* Width of each dot */
-    height: 10px; /* Height of each dot */
-    border-radius: 50%; /* Circular dots */
-    background-color: #bbb; /* Default dot color */
-    margin: 0 5px; /* Spacing between dots */
-    cursor: pointer; /* Pointer cursor on hover */
-  }
-  
-  .dot.active {
-    background-color: #717171; /* Active dot color */
-  }
-  
-  .servicesmain {
-    padding: 20px; /* Padding around services section */
-  }
-  
-  .heading {
-    text-align: center; /* Center align heading */
-    margin-bottom: 20px;
-    color: orange; /* Space below the heading */
-  }
-  
-  .services {
-    display: grid; /* Use grid layout for services */
-    grid-template-columns: repeat(3, 1fr); /* Three equal columns */
-    gap: 20px; /* Space between service boxes */
-  }
-  
-  .service-box {
-    cursor: pointer; /* Change cursor to pointer on hover */
-    border: 1px solid #ddd; /* Border for service boxes */
-    padding: 10px; /* Space inside the service box */
-    text-align: center; /* Center align text and images */
-    transition: background-color 0.3s; /* Smooth background transition */
-    border-radius: 5px; /* Optional rounded corners */
-  }
-  
-  .service-box:hover {
-    background-color: #f9f9f9; /* Change background on hover */
-  }
-  
-  .service-box img {
-    max-width: 100%; /* Ensure images fit within the box */
-    height: 200px; /* Maintain aspect ratio */
-    border-radius: 5px; /* Optional rounded corners for images */
-  }
-  
-  .dropdown {
-    display: none; /* Hidden by default */
-  }
-  
-  .service-box.active .dropdown {
-    display: block; /* Show dropdown text when active */
-    margin-top: 10px; /* Space above the text */
-    color: #555; /* Text color */
-  }
-  
+}
+
+.home-heading {
+  text-align: center;
+  margin-bottom: 20px;
+  color: orange;
+}
+
+.home-services {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  padding: 0 40px;
+}
+
+.home-service-box {
+  cursor: pointer;
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s ease;
+  border-radius: 5px;
+}
+
+.home-service-box:hover {
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: scale(1.05);
+}
+
+.home-service-box img {
+  max-width: 100%;
+  height: 200px;
+  border-radius: 5px;
+  transition: transform 0.3s ease;
+}
+
+.home-service-box:hover img {
+  transform: scale(1.05);
+}
+
+.home-dropdown {
+  display: none;
+}
+
+.home-service-box.active .home-dropdown {
+  display: block;
+  margin-top: 10px;
+  color: #555;
+  animation: fadeInUp 0.5s ease-in-out;
+}

@@ -1,66 +1,63 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
 const Footer = () => {
-  const [showContactInfo, setShowContactInfo] = useState(false);
-  const [showServices, setShowServices] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  const toggleContactInfo = () => {
-    setShowContactInfo(!showContactInfo);
-    setShowServices(false); // hide services when showing contact info
-  };
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        } else {
+          setIsVisible(false);
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-  const toggleServices = () => {
-    setShowServices(!showServices);
-    setShowContactInfo(false); // hide contact info when showing services
-  };
+    const footerElement = document.querySelector('.footer-container');
+    if (footerElement) observer.observe(footerElement);
+
+    return () => {
+      if (footerElement) observer.unobserve(footerElement);
+    };
+  }, []);
 
   return (
-    <div className="footer">
-      <div className="footer-buttons">
-        <button onClick={toggleContactInfo}>Contact Info</button>
-        <button onClick={toggleServices}>Services</button>
-      </div>
-
-      {showContactInfo && (
-        <div className="contactinfo">
-          <h3>Contact Information</h3>
-          <p>Email: info@oyoservices.com</p>
-          <p>Phone: +91 12345 67890</p>
-          <p>Address: 123, Main Street, Your City, Your State</p>
-        </div>
-      )}
-
-      {showServices && (
-        <div className="about-us">
-          <h3>Services Provided</h3>
-          <ul className="services-list">
-            <li>Plumber</li>
-            <li>Carpenter</li>
-            <li>Beautician</li>
-            <li>Electrician</li>
-            <li>AC Service</li>
-            <li>Masonry Work</li>
-            <li>Toilet Cleaning</li>
-            <li>Homemaker</li>
-            <li>Laundry</li>
-            <li>Salon</li>
-            <li>RMP (Registered Medical Practitioner)</li>
-            <li>Rental House</li>
-            <li>Puncture Repair</li>
-            <li>Bike Mechanic</li>
-            <li>Home Plans</li>
-            <li>Vastu Consultant</li>
-            <li>Engineer</li>
-            <li>Home Loans</li>
-            <li>Bike Finance</li>
-            <li>Flat Mediator</li>
-            <li>Priest</li>
-            <li>Washer (Laundry Worker)</li>
-            <li>Domestic Worker</li>
-            <li>Marriage Mediator</li>
+    <div className={`footer-container ${isVisible ? 'visible' : ''}`}>
+      <div className="footer-content">
+        <div className="footer-section">
+          <h3>About Us</h3>
+          <ul>
+            <li>Company</li>
+            <li>Careers</li>
+            <li>Press</li>
+            <li>Contact</li>
           </ul>
         </div>
-      )}
+        <div className="footer-section">
+          <h3>Services</h3>
+          <ul>
+            <li>Plumbing</li>
+            <li>Electricians</li>
+            <li>Cleaning</li>
+            <li>Maintenance</li>
+          </ul>
+        </div>
+        <div className="footer-section">
+          <h3>Follow Us</h3>
+          <div className="social-icons">
+            <FaFacebook />
+            <FaTwitter />
+            <FaInstagram />
+            <FaLinkedin />
+          </div>
+        </div>
+      </div>
+      <div className="footer-bottom">
+        <p>© 2024 Oyo Services. All Rights Reserved.</p>
+      </div>
     </div>
   );
 };
