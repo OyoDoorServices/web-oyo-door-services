@@ -11,7 +11,7 @@ const Login = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneno, setPhoneno] = useState("");
-  const[pincode,setpincode]=useState("");
+  const[pincode,setPincode]=useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -25,7 +25,7 @@ const Login = () => {
           name: trimmedUsername,
           email,
           phoneNumber: phoneno,
-          Pincode:pincode
+          pincode
         }
       );
 
@@ -34,7 +34,7 @@ const Login = () => {
         setName("");
         setEmail("");
         setPhoneno("");
-        setpincode("");
+        setPincode("");
         const userData = response.data.user;
         dispatch(userExist(userData));
         localStorage.setItem("user", JSON.stringify(userData));
@@ -44,7 +44,7 @@ const Login = () => {
         setName("");
         setEmail("");
         setPhoneno("");
-        setpincode("");
+        setPincode("");
       }
     } catch (error) {
       toast.error("INTERNAL SERVER ERROR");
@@ -143,7 +143,7 @@ const Login = () => {
           placeholder="Enter pincode"
           value={pincode}
           onChange={(e) => {
-            setpincode(e.target.value);
+            setPincode(e.target.value);
           }}
         />
       </div>

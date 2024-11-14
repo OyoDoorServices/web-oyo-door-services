@@ -6,8 +6,8 @@ interface IUser extends Document {
   email: string;
   photo: string;
   phoneNumber: number;
-  Pincode:number;
-  role: "admin" | "user";
+  Pincode: number;
+  role: "admin" | "user" | "distributor";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,9 +35,9 @@ const schema = new mongoose.Schema(
         message: "Phone Number must be exactly 10 digits",
       },
     },
-    Pincode: {
-      type:Number,
-      required:[true,"please enter your area's pincode"],
+    pincode: {
+      type: Number,
+      required: [true, "please enter your area's pincode"],
     },
     photo: {
       type: String,
@@ -47,7 +47,7 @@ const schema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "user"],
+      enum: ["admin", "user", "distributor"],
       default: "user",
     },
   },

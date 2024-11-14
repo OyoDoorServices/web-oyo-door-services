@@ -29,6 +29,8 @@ const Header = () => {
     };
   }, []);
 
+  console.log(user?.photo)
+
   return (
     <div className="navbar">
       <div className="logo">
