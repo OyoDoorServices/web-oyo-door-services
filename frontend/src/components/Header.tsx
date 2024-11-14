@@ -38,7 +38,7 @@ const Header = () => {
         <button className="Homebutton" onClick={() => navigate("/")}>
           Home
         </button>
-        <button className="Servicebutton">Services</button>
+        <button className="Servicebutton" onClick={()=>navigate("/services")}>Services</button>
         {user ? (
           <>
             <div ref={profileRef} style={{ position: "relative" }}>

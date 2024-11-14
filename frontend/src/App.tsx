@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { useDispatch, useSelector } from "react-redux";
 import { userReducerInitialState } from "./types/reducerTypes";
 import { userExist } from "./redux/reducer/userReducer";
+import Services from "./pages/services";
 
 //lazy loading
 const Home = lazy(() => import("./pages/Home"));
@@ -50,6 +51,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/services" element={<Services />} />
           </Routes>
           <Toaster position="top-center" />
         </Suspense>
