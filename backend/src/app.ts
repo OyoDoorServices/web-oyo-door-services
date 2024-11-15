@@ -5,6 +5,7 @@ import { connectDB } from "./utils/features";
 
 //importing routes
 import userRoute from "./routes/User";
+import serviceRoute from "./routes/Service";
 
 config({
   path: "./.env",
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 
 //using routes
 app.use("/api/v1/user", userRoute);
+app.use("/api/v1/service", serviceRoute);
 
 app.listen(port, () => {
   console.log(`server is running on http://localhost:${port}`);
