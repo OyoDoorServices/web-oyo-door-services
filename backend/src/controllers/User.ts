@@ -41,3 +41,62 @@ export const newUserController = async (
     console.log(error);
   }
 };
+
+export const changeRoleController = async (  // admin only
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { role, email } = req.body;
+
+    const user = await User.findOneAndUpdate(
+      { email },
+      { role },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No user exists with this email",
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: `${user.name}'s role changed to ${user.role}`,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
+export const deleteUser = async (  // admin only
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { id } = req.body;
+    const user=await User.findOneAndDelete({id});
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No user exists with this email",
+      });
+    }
+    return res.status(201).json({
+      success:true,
+      message:`${user.name}'s account has been deleted`,
+    });
+    
+   
+  } catch (error) {
+    console.error(error);
+  }
+};
+

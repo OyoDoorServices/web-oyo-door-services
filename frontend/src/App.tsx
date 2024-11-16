@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { userReducerInitialState } from "./types/reducerTypes";
 import { userExist } from "./redux/reducer/userReducer";
 import Services from "./pages/services";
+import Address from "./pages/address";
 
 //lazy loading
 const Home = lazy(() => import("./pages/Home"));
@@ -52,6 +53,7 @@ function App() {
               }
             />
             <Route path="/services" element={<Services />} />
+            <Route path="/address" element={<Address />} />
           </Routes>
           <Toaster position="top-center" />
         </Suspense>
