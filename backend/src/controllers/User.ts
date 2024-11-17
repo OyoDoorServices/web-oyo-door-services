@@ -8,7 +8,7 @@ export const newUserController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { name, email, phoneNumber,pincode, photo } = req.body;
+    const { name, email, phoneNumber, pincode, photo } = req.body;
     let user = await User.findOne({ email });
     if (user) {
       if (photo) {
@@ -29,7 +29,7 @@ export const newUserController = async (
       name,
       email,
       phoneNumber,
-      pincode
+      pincode,
     });
 
     return res.status(201).json({
@@ -42,7 +42,7 @@ export const newUserController = async (
   }
 };
 
-export const changeRoleController = async (  // admin only
+export const changeRoleController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -71,6 +71,7 @@ export const changeRoleController = async (  // admin only
     console.error(error);
   }
 };
+
 export const deleteUserController = async (
   req: Request,
   res: Response,
@@ -78,7 +79,7 @@ export const deleteUserController = async (
 ): Promise<any> => {
   try {
     const { id } = req.query;
-    const { targetId } = req.body; 
+    const { targetId } = req.body;
 
     if (!id || !targetId) {
       return res.status(400).json({
@@ -107,7 +108,7 @@ export const deleteUserController = async (
       await User.findByIdAndDelete(targetId);
       return res.status(200).json({
         success: true,
-        message: `User has been deleted`,
+        message: "User has been deleted",
       });
     } else {
       return res.status(403).json({
@@ -126,8 +127,8 @@ export const updateUserProfileController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { id } = req.query; 
-    const { newname, newemail, newphoneno, newpincode } = req.body; 
+    const { id } = req.query;
+    const { newname, newemail, newphoneno, newpincode, photo } = req.body;
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -145,9 +146,10 @@ export const updateUserProfileController = async (
     if (newemail) user.email = newemail;
     if (newphoneno) user.phoneNumber = newphoneno;
     if (newpincode) user.pincode = newpincode;
+    if (photo) user.photo = photo;
     await user.save();
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
       message: "User profile updated successfully",
     });
@@ -162,7 +164,7 @@ export const getAllUsersController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { id } = req.query; 
+    const { id } = req.query;
 
     const user = await User.findById(id);
     if (!user) {
@@ -175,8 +177,8 @@ export const getAllUsersController = async (
     let users;
 
     if (user.role === "admin") {
-      users = await User.find(); 
-    }else{
+      users = await User.find();
+    } else {
       users = await User.find({ pincode: user.pincode });
     }
     return res.status(200).json({
