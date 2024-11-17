@@ -42,7 +42,7 @@ export const newUserController = async (
   }
 };
 
-export const change_role_Controller = async (  // admin only
+export const changeRoleController = async (  // admin only
   req: Request,
   res: Response,
   next: NextFunction
@@ -71,7 +71,7 @@ export const change_role_Controller = async (  // admin only
     console.error(error);
   }
 };
-export const delete_user_Controller = async (
+export const deleteUserController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -120,7 +120,7 @@ export const delete_user_Controller = async (
   }
 };
 
-export const update_user_profile_Controller = async (
+export const updateUserProfileController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -156,7 +156,7 @@ export const update_user_profile_Controller = async (
   }
 };
 
-export const get_all_users_Controller = async (
+export const getAllUsersController = async (
   req: Request,
   res: Response,
   next: NextFunction
