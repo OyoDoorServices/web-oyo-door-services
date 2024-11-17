@@ -86,8 +86,8 @@ $service-height: 250px;
 
           .checkbox-container {
             position: absolute;
-            top: 10px; // Position inside the box
-            right: 10px; // Position inside the box
+            top: 10px;
+            right: 10px;
             z-index: 1;
 
             input[type="checkbox"] {
