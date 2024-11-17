@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const schema = new mongoose.Schema(
   {
     userId: {
@@ -13,18 +12,36 @@ const schema = new mongoose.Schema(
       ref: "Provider",
       required: true,
     },
-    serviceId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Service",
-      required: true,
-    },
+    serviceIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Service",
+        required: true,
+      },
+    ],
     orderDate: {
       type: Date,
       default: Date.now,
     },
+    address: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    pincode: {
+      type: Number,
+      required: true,
+    },
     status: {
       type: String,
-      enum: ["processing", "processed", "canceled"],
+      enum: ["processing", "processed"],
       default: "processing",
     },
   },

@@ -6,19 +6,24 @@ import Header from "./components/Header";
 import Loader from "./components/Loader";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { useDispatch, useSelector } from "react-redux";
-import { userReducerInitialState } from "./types/reducerTypes";
+import {
+  orderReducerInitialState,
+  userReducerInitialState,
+} from "./types/reducerTypes";
 import { userExist } from "./redux/reducer/userReducer";
-import Services from "./pages/services";
-import Address from "./pages/address";
-
 //lazy loading
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
+const Services = lazy(() => import("./pages/Services"));
+const Address = lazy(() => import("./pages/Address"));
 
 function App() {
   const dispatch = useDispatch();
   const { user } = useSelector(
     (state: { userReducer: userReducerInitialState }) => state.userReducer
+  );
+  const { orders } = useSelector(
+    (state: { orderReducer: orderReducerInitialState }) => state.orderReducer
   );
   useEffect(() => {
     const checkAuthState = async () => {
@@ -52,8 +57,25 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path="/services" element={<Services />} />
-            <Route path="/address" element={<Address />} />
+            <Route
+              path="/services"
+              element={
+                <ProtectedRoute isAuthenticated={user ? true : false}>
+                  <Services />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/address"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user ? true : false}
+                  orders={orders.length === 0 ? false : true}
+                >
+                  <Address />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
           <Toaster position="top-center" />
         </Suspense>

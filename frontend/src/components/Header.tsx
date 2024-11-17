@@ -29,7 +29,6 @@ const Header = () => {
     };
   }, []);
 
-  console.log(user?.photo)
 
   return (
     <div className="navbar">
@@ -40,7 +39,9 @@ const Header = () => {
         <button className="Homebutton" onClick={() => navigate("/")}>
           Home
         </button>
-        <button className="Servicebutton" onClick={()=>navigate("/services")}>Services</button>
+        <button className="Servicebutton" onClick={() => navigate("/services")}>
+          Services
+        </button>
         {user ? (
           <>
             <div ref={profileRef} style={{ position: "relative" }}>

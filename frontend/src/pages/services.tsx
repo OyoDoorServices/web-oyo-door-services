@@ -1,104 +1,97 @@
 import { useState } from "react";
-import "../styles/Services.scss"; // Adjust the path as needed
 import delivery from "../assets/delivery.jpeg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addService } from "../redux/reducer/orderReducer";
+import { Service } from "../types/types";
 
 const Services = () => {
   const [search, setSearch] = useState("");
-  const [selectedServices, setSelectedServices] = useState<number[]>([]); // Tracks selected services by their IDs
-  const navigate=useNavigate();
+  const [selectedServices, setSelectedServices] = useState<Service[]>([]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const servicesList = [
-    { id: 1, imgSrc: delivery, title: "Delivery Service", text: "Delivery services for your convenience." },
-    { id: 2, imgSrc: "path/to/mechanic.jpg", title: "Mechanic Service", text: "Expert mechanical services for your vehicle." },
-    { id: 3, imgSrc: "path/to/physiotherapy.jpg", title: "Physiotherapy", text: "Physiotherapy for pain relief and recovery." },
-    { id: 4, imgSrc: "path/to/cleaning.jpg", title: "Cleaning Service", text: "Cleaning services for your home and office." },
-    { id: 5, imgSrc: "path/to/painting.jpg", title: "Gardening", text: "Gardening services to beautify your outdoor space." },
-    { id: 6, imgSrc: "path/to/ac.jpg", title: "Painting Service", text: "Interior and exterior painting services." },
+  const servicesList: Service[] = [
+    {
+      serviceId: "1",
+      photo: delivery,
+      name: "Delivery Service",
+      description: "Delivery services for your convenience.",
+      ratings: 4.5,
+      numOfReviews: 200,
+    },
+    {
+      serviceId: "2",
+      photo: "path/to/mechanic.jpg",
+      name: "Mechanic Service",
+      description: "Expert mechanical services for your vehicle.",
+      ratings: 4.2,
+      numOfReviews: 150,
+    },
+    {
+      serviceId: "3",
+      photo: "path/to/physiotherapy.jpg",
+      name: "Physiotherapy",
+      description: "Physiotherapy for pain relief and recovery.",
+      ratings: 4.8,
+      numOfReviews: 120,
+    },
+    {
+      serviceId: "4",
+      photo: "path/to/cleaning.jpg",
+      name: "Cleaning Service",
+      description: "Cleaning services for your home and office.",
+      ratings: 4.3,
+      numOfReviews: 180,
+    },
+    {
+      serviceId: "5",
+      photo: "path/to/painting.jpg",
+      name: "Gardening",
+      description: "Gardening services to beautify your outdoor space.",
+      ratings: 4.7,
+      numOfReviews: 90,
+    },
+    {
+      serviceId: "6",
+      photo: "path/to/ac.jpg",
+      name: "Painting Service",
+      description: "Interior and exterior painting services.",
+      ratings: 4.4,
+      numOfReviews: 110,
+    },
   ];
 
-  // Display filtered services if a search term exists; otherwise, display all services
+  // Filter services based on the search input
   const displayedServices = search
     ? servicesList.filter((service) =>
-        service.text.toLowerCase().includes(search.toLowerCase())
+        service.name.toLowerCase().includes(search.toLowerCase())
       )
     : servicesList;
 
-  // Toggles the selected state of a service
-  const toggleSelection = (id: number) => {
+  // Toggle selection for a service
+  const toggleSelection = (service: Service) => {
     setSelectedServices((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((serviceId) => serviceId !== id) // Unselect if already selected
-        : [...prevSelected, id] // Select if not selected
+      prevSelected.find((s) => s.serviceId === service.serviceId)
+        ? prevSelected.filter((s) => s.serviceId !== service.serviceId) // Remove if already selected
+        : [...prevSelected, service] // Add if not selected
     );
   };
 
-  // Confirm booking action
-  const confirmBooking = () => {
-    const selectedTitles = servicesList
-      .filter((service) => selectedServices.includes(service.id))
-      .map((service) => service.title)
-      .join(", ");
-    toast.success(`Services booked: ${selectedTitles}`);
-    navigate("/address");
-  };
-
-  // Cancel booking action
-  const cancelBooking = () => {
-    toast.error("Booking canceled.");
-  };
-
-  // Show toast with options
-  const bookServices = () => {
+  // Checkout action: Update Redux state and navigate
+  const checkoutHandler = () => {
     if (selectedServices.length === 0) {
       toast.error("No services selected!");
-    } else {
-      const selectedTitles = servicesList
-        .filter((service) => selectedServices.includes(service.id))
-        .map((service) => service.title)
-        .join(", ");
-
-      toast(
-        <div>
-          <p>You selected: <b>{selectedTitles}</b></p>
-          <p>Are you sure you want to book?</p>
-          <div>
-            <button
-              style={{
-                marginRight: "10px",
-                padding: "5px 10px",
-                backgroundColor: "green",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-              }}
-              onClick={confirmBooking}
-            >
-              Yes
-            </button>
-            <button
-              style={{
-                padding: "5px 10px",
-                backgroundColor: "red",
-                color: "white",
-                border: "none",
-                borderRadius: "5px",
-              }}
-              onClick={cancelBooking}
-            >
-              No
-            </button>
-          </div>
-        </div>,
-        {
-          autoClose: false, // Keep the toast open until user interacts
-          closeOnClick: false,
-          draggable: false,
-        }
-      );
+      return;
     }
+
+    // Dispatch selected services to the global store
+    selectedServices.forEach((service) => dispatch(addService(service)));
+
+    toast.success("Services added to the cart!");
+    navigate("/address");
   };
 
   return (
@@ -111,30 +104,38 @@ const Services = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <button className="bookbutton" onClick={bookServices}>
-          Book services
+        <button className="bookbutton" onClick={checkoutHandler}>
+          Checkout
         </button>
       </div>
       <div className="services">
         <ul className="services-list">
           {displayedServices.map((service) => (
-            <li key={service.id} className="service-item">
+            <li key={service.serviceId} className="service-item">
               <div
                 className={`service ${
-                  selectedServices.includes(service.id) ? "selected" : ""
+                  selectedServices.some((s) => s.serviceId === service.serviceId)
+                    ? "selected"
+                    : ""
                 }`}
               >
                 <div className="checkbox-container">
                   <input
                     type="checkbox"
-                    checked={selectedServices.includes(service.id)}
-                    onChange={() => toggleSelection(service.id)}
+                    checked={selectedServices.some(
+                      (s) => s.serviceId === service.serviceId
+                    )}
+                    onChange={() => toggleSelection(service)}
                   />
                 </div>
-                <img src={service.imgSrc} alt={service.title} className="service-img" />
+                <img
+                  src={service.photo}
+                  alt={service.name}
+                  className="service-img"
+                />
                 <div className="service-content">
-                  <h3>{service.title}</h3>
-                  <p>{service.text}</p>
+                  <h3>{service.name}</h3>
+                  <p>{service.description}</p>
                 </div>
               </div>
             </li>

@@ -1,11 +1,16 @@
-import { User } from "./types";
+import { Service, User } from "./types";
 
 export interface userReducerInitialState {
-    user: User | null;
-    loading: boolean;
-  }
+  user: User | null;
+  loading: boolean;
+}
 
-  export type UserResponse = {
-    success: boolean;
-    user: User;
-  };
+export interface orderReducerInitialState {
+  orders: Service[];
+  loading: boolean;
+}
+
+export type UserResponse = {
+  success: boolean;
+  user: User;
+};

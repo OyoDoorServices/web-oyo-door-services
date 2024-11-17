@@ -5,6 +5,7 @@ const schema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Please enter Name"],
+      unique: [true, "this service already exits"],
     },
     photo: {
       type: String,
@@ -13,14 +14,6 @@ const schema = new mongoose.Schema(
     description: {
       type: String,
       required: [true, "Please enter Description"],
-    },
-    ratings: {
-      type: Number,
-      default: 0,
-    },
-    numOfReviews: {
-      type: Number,
-      default: 0,
     },
   },
   {

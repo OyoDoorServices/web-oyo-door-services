@@ -1,8 +1,9 @@
 import { useState } from "react";
-
-
+import { useDispatch } from "react-redux";
+import { clearOrders } from "../redux/reducer/orderReducer";
 
 const Address = () => {
+  const dispatch = useDispatch();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNo, setPhoneNo] = useState("");
@@ -11,9 +12,9 @@ const Address = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    dispatch(clearOrders())
     alert("Address submitted successfully!");
-    
+
     setName("");
     setEmail("");
     setPhoneNo("");
@@ -24,7 +25,10 @@ const Address = () => {
   return (
     <div style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}>
       <h2>Enter Address</h2>
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: "flex", flexDirection: "column", gap: "15px" }}
+      >
         <div>
           <label htmlFor="name">Name:</label>
           <input
@@ -90,7 +94,16 @@ const Address = () => {
           ></textarea>
         </div>
 
-        <button type="submit" style={{ padding: "10px", backgroundColor: "blue", color: "white", border: "none", borderRadius: "5px" }}>
+        <button
+          type="submit"
+          style={{
+            padding: "10px",
+            backgroundColor: "blue",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+          }}
+        >
           Submit
         </button>
       </form>
