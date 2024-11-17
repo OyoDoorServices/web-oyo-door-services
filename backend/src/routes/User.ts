@@ -1,14 +1,13 @@
 import express from "express";
-import { changeRoleController, deleteUser, newUserController, updateUserProfile,getAllUsers } from "../controllers/User";
+import { change_role_Controller, delete_user_Controller, get_all_users_Controller, newUserController, update_user_profile_Controller } from "../controllers/User";
 import { adminOnly, adminOrDistributorOnly } from "../middlewares/auth";
-import { deleteModel } from "mongoose";
 
 const app = express.Router();
 
 app.post("/new", newUserController);
-app.post("/change-role", adminOnly, changeRoleController);
-app.delete("/deleteUser",adminOrDistributorOnly,deleteUser);
-app.post("/updateUserProfile",updateUserProfile)
-app.get("/getAllUsers",adminOrDistributorOnly,getAllUsers)
+app.post("/change-role", adminOnly, change_role_Controller);
+app.delete("/delete-user",adminOrDistributorOnly,delete_user_Controller);
+app.post("/update-user-profile",update_user_profile_Controller)
+app.get("/get-all-users",adminOrDistributorOnly,get_all_users_Controller)
 
 export default app;
