@@ -71,55 +71,63 @@ export const changeRoleController = async (  // admin only
     console.error(error);
   }
 };
-export const deleteUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<any> => {
-  try { 
-    const { targetId } = req.body;   
-
-    // Ensure the targetId is provided
-    if (!targetId) {
-      return res.status(400).json({
-        success: false,
-        message: "Target user ID must be provided",
-      });
-    }
-
-    
-    const targetUser = await User.findById(targetId);
-    if (!targetUser) {
-      return res.status(404).json({
-        success: false,
-        message: "No user exists with the provided ID",
-      });
-    }
-
-    
-    await User.findByIdAndDelete(targetId);
-
-    return res.status(200).json({
-      success: true,
-      message: `${targetUser.name}'s account has been deleted`,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while deleting the user",
-    });
-  }
-};
-
-export const updateUserProfile = async (
+export const deleteUserController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { id } = req.query; // ID of the authenticated user
-    const { newname, newemail, newphoneno, newpincode } = req.body; // Fields to update
+    const { id } = req.query;
+    const { targetId } = req.body; 
+
+    if (!id || !targetId) {
+      return res.status(400).json({
+        success: false,
+        message: "Distributor or User not found",
+      });
+    }
+
+    const distributor = await User.findById(id);
+    if (!distributor) {
+      return res.status(404).json({
+        success: false,
+        message: "Distributor not found",
+      });
+    }
+
+    const targetUser = await User.findById(targetId);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    if (distributor.pincode == targetUser.pincode) {
+      await User.findByIdAndDelete(targetId);
+      return res.status(200).json({
+        success: true,
+        message: `User has been deleted`,
+      });
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "You are Unauthorized distributor for this user",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateUserProfileController = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { id } = req.query; 
+    const { newname, newemail, newphoneno, newpincode } = req.body; 
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -136,34 +144,26 @@ export const updateUserProfile = async (
     if (newname) user.name = newname;
     if (newemail) user.email = newemail;
     if (newphoneno) user.phoneNumber = newphoneno;
-    if (newpincode) user.Pincode = newpincode;
+    if (newpincode) user.pincode = newpincode;
     await user.save();
 
     return res.status(200).json({
       success: true,
       message: "User profile updated successfully",
-      user,
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 };
 
-export const getAllUsers = async (
+export const getAllUsersController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
     const { id } = req.query; 
-    if (!id) {
-      return res.status(400).json({
-        success: false,
-        message: "Authenticated user ID must be provided",
-      });
-    }
 
-    // Find the authenticated user
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({
@@ -174,27 +174,16 @@ export const getAllUsers = async (
 
     let users;
 
-    // Check the role of the authenticated user
     if (user.role === "admin") {
-      users = await User.find(); // Fetch all users
-    } else if (user.role === "distributor") {
-      users = await User.find({ pincode: user.Pincode }); // Fetch users with matching pincode
-    } else {
-      return res.status(403).json({
-        success: false,
-        message: "You are not authorized to access this data",
-      });
+      users = await User.find(); 
+    }else{
+      users = await User.find({ pincode: user.pincode });
     }
     return res.status(200).json({
       success: true,
-      message: "Users retrieved successfully",
       users,
     });
   } catch (error) {
-    console.error("Error retrieving users:", error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while retrieving users",
-    });
+    console.log("Error retrieving users:", error);
   }
 };

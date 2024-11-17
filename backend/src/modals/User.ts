@@ -6,7 +6,7 @@ interface IUser extends Document {
   email: string;
   photo: string;
   phoneNumber: number;
-  Pincode: number;
+  pincode: number;
   role: "admin" | "user" | "distributor";
   createdAt: Date;
   updatedAt: Date;
