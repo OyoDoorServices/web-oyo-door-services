@@ -4,8 +4,8 @@ $background-color: #f9f9f9;
 $text-color: #333;
 $shadow-color: rgba(0, 0, 0, 0.1);
 $hover-shadow-color: rgba(0, 0, 0, 0.2);
-$gap: 20px;
-$service-width: 150px;
+$gap: 40px;
+$service-width: 300px;
 $service-height: 250px;
 
 .wholepage {
@@ -17,36 +17,36 @@ $service-height: 250px;
     margin-top: 10vh;
     display: flex;
     align-items: center;
-    position: relative; // Ensures the button can be positioned absolutely
+    position: relative;
 
     input {
-      width: 60%; // Search bar occupies 60% of the width
+      width: 60%;
       padding: 10px;
       font-size: 16px;
       border: 1px solid $border-color;
       border-radius: 4px;
-      margin: 0 auto; // Centers the search bar horizontally
+      margin: 0 auto;
     }
 
     .bookbutton {
-      position: absolute; // Positioning relative to the .searchbar container
-      right: 0; // Aligns the button to the rightmost corner
-      padding: 10px 20px; // Button padding for a balanced look
-      background-color: blue; // Blue background
-      color: white; // White text
+      position: absolute;
+      right: 0;
+      padding: 10px 20px;
+      background-color: blue;
+      color: white;
       font-size: 16px;
-      border: none; // No border
-      border-radius: 5px; // Rounded corners
-      cursor: pointer; // Pointer cursor on hover
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
       transition: transform 0.3s ease, background-color 0.3s ease;
 
       &:hover {
-        background-color: darkblue; // Darker blue on hover
-        transform: scale(1.1); // Slight enlargement effect
+        background-color: darkblue;
+        transform: scale(1.1);
       }
 
       &:active {
-        transform: scale(1); // Reset scale on click
+        transform: scale(1);
       }
     }
   }
@@ -54,7 +54,7 @@ $service-height: 250px;
   .services {
     .services-list {
       display: grid;
-      grid-template-columns: repeat(3, 1fr); // 3-column layout
+      grid-template-columns: repeat(4, 1fr);
       gap: $gap;
       list-style-type: none;
       padding: 0;
@@ -71,32 +71,35 @@ $service-height: 250px;
           max-width: $service-width;
           height: $service-height;
           border: 1px solid $border-color;
+          margin-bottom: 30px;
           border-radius: 8px;
           background-color: $background-color;
           box-shadow: 0 2px 5px $shadow-color;
           overflow: hidden;
+          position: relative;
           transition: transform 0.3s ease, box-shadow 0.3s ease;
 
           &:hover {
-            transform: scale(1.05); // Enlarge on hover
-            box-shadow: 0 4px 10px $hover-shadow-color; // Shadow effect on hover
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px $hover-shadow-color;
           }
 
           .checkbox-container {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 10px; // Position inside the box
+            right: 10px; // Position inside the box
             z-index: 1;
 
             input[type="checkbox"] {
-              transform: scale(1.2); // Slightly larger checkbox
+              width: 20px;
+              height: 20px;
               cursor: pointer;
             }
           }
 
           .service-img {
             width: 100%;
-            height: 60%; // Image occupies 60% of the service box height
+            height: 65%;
             object-fit: cover;
           }
 
