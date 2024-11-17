@@ -3,7 +3,7 @@ import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 import { userReducerInitialState } from "../types/reducerTypes";
 import { useEffect, useRef, useState } from "react";
-import Logout from "./Logout";
+import QuickSettings from "./QuickSettings";
 
 const Header = () => {
   const { user } = useSelector(
@@ -51,7 +51,7 @@ const Header = () => {
                 alt="user photo"
                 onClick={() => setShowLogout((prev) => !prev)}
               />
-              {showLogout && <Logout />}
+              {showLogout && <QuickSettings />}
             </div>
           </>
         ) : (

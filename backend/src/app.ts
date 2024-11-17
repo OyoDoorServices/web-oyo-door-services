@@ -1,4 +1,5 @@
 import cors from "cors";
+import { v2 as cloudinary } from "cloudinary";
 import { config } from "dotenv";
 import express from "express";
 import { connectDB } from "./utils/features";
@@ -10,6 +11,12 @@ import orderRoute from "./routes/Order";
 
 config({
   path: "./.env",
+});
+
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_SECRET,
 });
 
 const port = process.env.PORT || 4000;

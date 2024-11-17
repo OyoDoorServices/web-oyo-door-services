@@ -156,10 +156,6 @@ export const getUserOrdersController = async (
 ): Promise<any> => {
   try {
     const { id } = req.query;
-    const { status } = req.query;
-    const page = Number(req.query.page) || 1;
-    const limit = 12;
-    const skip = (page - 1) * limit;
 
     if (!id) {
       return res.status(404).json({
@@ -170,12 +166,8 @@ export const getUserOrdersController = async (
 
     const filter: {
       userId: string;
-      status?: "processing" | "processed";
     } = { userId: id as string };
 
-    if (status) {
-      filter.status = status as "processing" | "processed";
-    }
 
     const totalOrders = await Order.countDocuments(filter);
 
@@ -184,8 +176,6 @@ export const getUserOrdersController = async (
         "serviceIds",
         "name photo"
       )
-      .limit(limit)
-      .skip(skip);
 
     if (userOrders.length === 0) {
       return res.status(404).json({
@@ -203,12 +193,9 @@ export const getUserOrdersController = async (
       })),
     }));
 
-    const totalPages = Math.ceil(totalOrders / limit);
-
     return res.status(200).json({
       success: true,
       orders: formattedOrders,
-      totalPages,
     });
   } catch (error) {
     console.log(error);

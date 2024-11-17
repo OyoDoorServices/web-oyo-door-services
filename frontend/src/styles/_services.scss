@@ -11,6 +11,45 @@ $service-height: 250px;
 .wholepage {
   width: 100%;
   padding: $gap;
+  height: auto;
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: blue;
+      color: white;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+      transition: background-color 0.3s ease;
+
+      &:disabled {
+        background-color: #808080;
+        cursor: not-allowed;
+      }
+      &:disabled:hover {
+        background-color: #6b6b6b;
+        cursor: not-allowed;
+      }
+
+      &:hover {
+        background-color: darkblue;
+      }
+    }
+
+    span {
+      font-size: 16px;
+      color: $text-color;
+    }
+  }
+
 
   .searchbar {
     margin-bottom: $gap;
@@ -99,20 +138,24 @@ $service-height: 250px;
 
           .service-img {
             width: 100%;
-            height: 65%;
+            height: 60%;
             object-fit: cover;
           }
 
           .service-content {
             padding: 10px;
+            height: calc(45% - 20px); 
+            overflow-y: auto; 
+            scrollbar-width: thin;
+            scrollbar-color: $shadow-color $background-color;
 
             h3 {
               margin: 10px 0 5px;
-              font-size: 18px;
+              font-size: 25px;
               color: $text-color;
               text-align: left;
             }
-
+          
             p {
               font-size: 14px;
               color: $text-color;
@@ -120,6 +163,7 @@ $service-height: 250px;
               margin: 0;
             }
           }
+          
         }
       }
     }

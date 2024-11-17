@@ -153,9 +153,18 @@ export const getUserDistributorServicesController = async (
       });
     }
 
-    const totalServices = await Provider.countDocuments({
+    const provider = await Provider.findOne({
       distributorId: distributor._id,
     });
+
+    if (!provider || !provider.serviceIds.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No services found",
+      });
+    }
+
+    const totalServices = provider.serviceIds.length
 
     return res.status(200).json({
       success: true,

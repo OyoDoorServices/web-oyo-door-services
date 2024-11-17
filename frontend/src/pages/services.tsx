@@ -1,98 +1,92 @@
-import { useState } from "react";
-import delivery from "../assets/delivery.jpeg";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { addService } from "../redux/reducer/orderReducer";
+import { userReducerInitialState } from "../types/reducerTypes";
 import { Service } from "../types/types";
 
 const Services = () => {
+  const { user } = useSelector(
+    (state: { userReducer: userReducerInitialState }) => state.userReducer
+  );
   const [search, setSearch] = useState("");
   const [selectedServices, setSelectedServices] = useState<Service[]>([]);
+  const [page, setPage] = useState(1);
+  const [servicesList, setServicesList] = useState<Service[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const isNextPage = page < totalPages;
+  const isPrevPage = page > 1;
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const servicesList: Service[] = [
-    {
-      serviceId: "1",
-      photo: delivery,
-      name: "Delivery Service",
-      description: "Delivery services for your convenience.",
-      ratings: 4.5,
-      numOfReviews: 200,
-    },
-    {
-      serviceId: "2",
-      photo: "path/to/mechanic.jpg",
-      name: "Mechanic Service",
-      description: "Expert mechanical services for your vehicle.",
-      ratings: 4.2,
-      numOfReviews: 150,
-    },
-    {
-      serviceId: "3",
-      photo: "path/to/physiotherapy.jpg",
-      name: "Physiotherapy",
-      description: "Physiotherapy for pain relief and recovery.",
-      ratings: 4.8,
-      numOfReviews: 120,
-    },
-    {
-      serviceId: "4",
-      photo: "path/to/cleaning.jpg",
-      name: "Cleaning Service",
-      description: "Cleaning services for your home and office.",
-      ratings: 4.3,
-      numOfReviews: 180,
-    },
-    {
-      serviceId: "5",
-      photo: "path/to/painting.jpg",
-      name: "Gardening",
-      description: "Gardening services to beautify your outdoor space.",
-      ratings: 4.7,
-      numOfReviews: 90,
-    },
-    {
-      serviceId: "6",
-      photo: "path/to/ac.jpg",
-      name: "Painting Service",
-      description: "Interior and exterior painting services.",
-      ratings: 4.4,
-      numOfReviews: 110,
-    },
-  ];
+  const getServices = async () => {
+    try {
+      const response = await axios.post(
+        `${
+          import.meta.env.VITE_SERVER
+        }/api/v1/service/all-user-distributor-services?page=${page}`,
+        {
+          pincode: user?.pincode,
+        }
+      );
+      if (response.data.success) {
+        setServicesList(response.data.services);
+        setPage(response.data.currentPage);
+        setTotalPages(response.data.totalPages);
+      } else {
+        toast.error("Error to Fetch services in your locality");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // Filter services based on the search input
-  const displayedServices = search
-    ? servicesList.filter((service) =>
-        service.name.toLowerCase().includes(search.toLowerCase())
-      )
-    : servicesList;
+  const searchServices = async (searchTerm: string) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_SERVER}/api/v1/service/search?pincode=${
+          user?.pincode
+        }&search=${searchTerm}`
+      );
+      if (response.data.success) {
+        setServicesList(response.data.services);
+      } else {
+        toast.error("Error searching for services");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  // Toggle selection for a service
   const toggleSelection = (service: Service) => {
     setSelectedServices((prevSelected) =>
-      prevSelected.find((s) => s.serviceId === service.serviceId)
-        ? prevSelected.filter((s) => s.serviceId !== service.serviceId) // Remove if already selected
-        : [...prevSelected, service] // Add if not selected
+      prevSelected.find((s) => s._id === service._id)
+        ? prevSelected.filter((s) => s._id !== service._id)
+        : [...prevSelected, service]
     );
   };
 
-  // Checkout action: Update Redux state and navigate
   const checkoutHandler = () => {
     if (selectedServices.length === 0) {
       toast.error("No services selected!");
       return;
     }
 
-    // Dispatch selected services to the global store
     selectedServices.forEach((service) => dispatch(addService(service)));
 
     toast.success("Services added to the cart!");
     navigate("/address");
   };
+  useEffect(() => {
+    if (search) {
+      searchServices(search);
+    } else {
+      getServices();
+    }
+  }, [page, search]);
 
   return (
     <div className="wholepage">
@@ -109,39 +103,67 @@ const Services = () => {
         </button>
       </div>
       <div className="services">
-        <ul className="services-list">
-          {displayedServices.map((service) => (
-            <li key={service.serviceId} className="service-item">
-              <div
-                className={`service ${
-                  selectedServices.some((s) => s.serviceId === service.serviceId)
-                    ? "selected"
-                    : ""
-                }`}
-              >
-                <div className="checkbox-container">
-                  <input
-                    type="checkbox"
-                    checked={selectedServices.some(
-                      (s) => s.serviceId === service.serviceId
-                    )}
-                    onChange={() => toggleSelection(service)}
+        {servicesList.length > 0 ? (
+          <ul className="services-list">
+            {servicesList.map((service) => (
+              <li key={service._id} className="service-item">
+                <div
+                  className={`service ${
+                    selectedServices.some((s) => s._id === service._id)
+                      ? "selected"
+                      : ""
+                  }`}
+                >
+                  <div className="checkbox-container">
+                    <input
+                      type="checkbox"
+                      checked={selectedServices.some(
+                        (s) => s._id === service._id
+                      )}
+                      onChange={() => toggleSelection(service)}
+                    />
+                  </div>
+                  <img
+                    src={service.photo}
+                    alt={service.name}
+                    className="service-img"
                   />
+                  <div className="service-content">
+                    <h3>{service.name}</h3>
+                    <p>{service.description}</p>
+                  </div>
                 </div>
-                <img
-                  src={service.photo}
-                  alt={service.name}
-                  className="service-img"
-                />
-                <div className="service-content">
-                  <h3>{service.name}</h3>
-                  <p>{service.description}</p>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p
+            className="no-services-message"
+            style={{ textAlign: "center", fontSize: "30px" }}
+          >
+            No available services in your area.
+          </p>
+        )}
       </div>
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            disabled={!isPrevPage}
+            onClick={() => setPage((prev) => prev - 1)}
+          >
+            Prev
+          </button>
+          <span>
+            {page} of {totalPages}
+          </span>
+          <button
+            disabled={!isNextPage}
+            onClick={() => setPage((prev) => prev + 1)}
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

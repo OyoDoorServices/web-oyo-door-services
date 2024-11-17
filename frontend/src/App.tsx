@@ -11,6 +11,7 @@ import {
   userReducerInitialState,
 } from "./types/reducerTypes";
 import { userExist } from "./redux/reducer/userReducer";
+import Profile from "./pages/Profile";
 //lazy loading
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -73,6 +74,16 @@ function App() {
                   orders={orders.length === 0 ? false : true}
                 >
                   <Address />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user ? true : false}
+                >
+                  <Profile />
                 </ProtectedRoute>
               }
             />

@@ -1,88 +1,91 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { clearOrders } from "../redux/reducer/orderReducer";
+import axios from "axios";
+import {
+  orderReducerInitialState,
+  userReducerInitialState,
+} from "../types/reducerTypes";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const Address = () => {
+  const { user } = useSelector(
+    (state: { userReducer: userReducerInitialState }) => state.userReducer
+  );
+  const { orders } = useSelector(
+    (state: { orderReducer: orderReducerInitialState }) => state.orderReducer
+  );
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNo, setPhoneNo] = useState("");
-  const [pincode, setPincode] = useState("");
+  const [state, setState] = useState("");
+  const [city, setCity] = useState("");
   const [address, setAddress] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(clearOrders())
-    alert("Address submitted successfully!");
 
-    setName("");
-    setEmail("");
-    setPhoneNo("");
-    setPincode("");
-    setAddress("");
+    try {
+      const orderIds = orders.map((order) => order._id);
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER}/api/v1/order/new/${user?._id}`,
+        {
+          serviceIds: orderIds,
+          address,
+          city,
+          state,
+          pincode: user?.pincode,
+        }
+      );
+      if (response.data.success) {
+        toast.success("Your Order has been placed");
+        navigate("/")
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    dispatch(clearOrders());
   };
 
   return (
-    <div style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}>
-      <h2>Enter Address</h2>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "15px" }}
-      >
-        <div>
-          <label htmlFor="name">Name:</label>
+    <div className="address-container">
+      <h2 className="address-heading">Enter Address</h2>
+      <form onSubmit={handleSubmit} className="address-form">
+        <div className="address-input-group">
+          <label htmlFor="state" className="address-label">
+            State:
+          </label>
           <input
             type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            id="state"
+            value={state}
+            onChange={(e) => setState(e.target.value)}
             required
-            placeholder="Enter your name"
-            style={{ width: "100%", padding: "8px", marginTop: "100px" }}
+            placeholder="Enter your State"
+            className="address-input"
           />
         </div>
 
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            placeholder="Enter your email"
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="phoneNo">Phone Number:</label>
-          <input
-            type="tel"
-            id="phoneNo"
-            value={phoneNo}
-            onChange={(e) => setPhoneNo(e.target.value)}
-            required
-            placeholder="Enter your phone number"
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="pincode">Pincode:</label>
+        <div className="address-input-group">
+          <label htmlFor="city" className="address-label">
+            City:
+          </label>
           <input
             type="text"
-            id="pincode"
-            value={pincode}
-            onChange={(e) => setPincode(e.target.value)}
+            id="city"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
             required
-            placeholder="Enter your pincode"
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            placeholder="Enter your City"
+            className="address-input"
           />
         </div>
 
-        <div>
-          <label htmlFor="address">Address:</label>
+        <div className="address-input-group">
+          <label htmlFor="address" className="address-label">
+            Address:
+          </label>
           <textarea
             id="address"
             value={address}
@@ -90,20 +93,11 @@ const Address = () => {
             required
             placeholder="Enter your address"
             rows={4}
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            className="address-textarea"
           ></textarea>
         </div>
 
-        <button
-          type="submit"
-          style={{
-            padding: "10px",
-            backgroundColor: "blue",
-            color: "white",
-            border: "none",
-            borderRadius: "5px",
-          }}
-        >
+        <button type="submit" className="address-submit-btn">
           Submit
         </button>
       </form>

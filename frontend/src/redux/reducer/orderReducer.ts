@@ -13,9 +13,7 @@ export const orderReducer = createSlice({
   reducers: {
     addService: (state, action: PayloadAction<Service>) => {
       state.loading = true;
-      const index = state.orders.findIndex(
-        (i) => i.serviceId === action.payload.serviceId
-      );
+      const index = state.orders.findIndex((i) => i._id === action.payload._id);
       if (index !== -1) state.orders[index] = action.payload;
       else {
         state.orders.push(action.payload);
@@ -24,7 +22,7 @@ export const orderReducer = createSlice({
     },
     removeService: (state, action: PayloadAction<string>) => {
       state.loading = true;
-      state.orders = state.orders.filter((i) => i.serviceId !== action.payload);
+      state.orders = state.orders.filter((i) => i._id !== action.payload);
       state.loading = false;
     },
     clearOrders: () => initialState,

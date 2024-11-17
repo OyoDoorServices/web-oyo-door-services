@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { User } from "../modals/User";
 import ErrorHandler from "../utils/utility-class";
+import { deleteFromCloudinary, uploadToCloudinary } from "../utils/features";
 
 export const newUserController = async (
   req: Request,
@@ -10,20 +11,24 @@ export const newUserController = async (
   try {
     const { name, email, phoneNumber, pincode, photo } = req.body;
     let user = await User.findOne({ email });
+
     if (user) {
-      if (photo) {
+      if ((photo && user.photo.includes("googleusercontent.com")) || user.photo.includes("thumb_15951118880user_oihuo6.png")) {
         user.photo = photo;
-        user.save();
+        await user.save();
       }
+
       return res.status(200).json({
         success: true,
-        message: `welcome, ${user.name}`,
+        message: `Welcome, ${user.name}`,
         user,
       });
     }
 
     if (!name || !email || !phoneNumber || !pincode)
       return next(new ErrorHandler("Please add all fields", 400));
+
+    const userPhoto = photo || "";
 
     user = await User.create({
       name,
@@ -37,6 +42,31 @@ export const newUserController = async (
       message: `Welcome ${user.name}`,
       user,
     });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+
+export const getUserController = async (req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, message: "User ID is required." });
+    }
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
+
+    return res.status(200).json({ success: true, user });
   } catch (error) {
     console.log(error);
   }
@@ -128,13 +158,15 @@ export const updateUserProfileController = async (
 ): Promise<any> => {
   try {
     const { id } = req.query;
-    const { newname, newemail, newphoneno, newpincode, photo } = req.body;
+    const { name, email, phoneNumber, pincode, photo } = req.body;
+
     if (!id) {
       return res.status(400).json({
         success: false,
         message: "ID must be provided",
       });
     }
+
     const user = await User.findById(id);
     if (!user) {
       return res.status(404).json({
@@ -142,21 +174,53 @@ export const updateUserProfileController = async (
         message: "No user found",
       });
     }
-    if (newname) user.name = newname;
-    if (newemail) user.email = newemail;
-    if (newphoneno) user.phoneNumber = newphoneno;
-    if (newpincode) user.pincode = newpincode;
-    if (photo) user.photo = photo;
+
+    if (photo && user.photo && user.photo.includes("cloudinary.com")) {
+      const publicId = user.photo.split("/").pop()?.split(".")[0];
+      if (publicId) {
+        await deleteFromCloudinary([publicId]);
+      }
+    }
+
+    let newPhotoUrl = user.photo; 
+
+    if (photo) {
+      const photoBase64 = photo.split(",")[1];
+      if (photoBase64) {
+        const uploadedPhoto = await uploadToCloudinary([
+          {
+            buffer: Buffer.from(photoBase64, "base64"),
+            mimetype: photo.split(";")[0].split(":")[1],
+          },
+        ]);
+        newPhotoUrl = uploadedPhoto[0].url;
+      }
+    }
+
+    // Update user details
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (pincode) user.pincode = pincode;
+    if (newPhotoUrl) user.photo = newPhotoUrl;
+
     await user.save();
 
     return res.status(201).json({
       success: true,
       message: "User profile updated successfully",
+      data: user,
     });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
   }
 };
+
+
 
 export const getAllUsersController = async (
   req: Request,

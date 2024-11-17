@@ -18,7 +18,7 @@ app.get(
   adminOrDistributorOnly,
   getDistributorServicesController
 ); // /api/v1/service/all-distributor-services?id
-app.get("/all-user-distributor-services", getUserDistributorServicesController); // /api/v1/service/all-user-distributor-services
+app.post("/all-user-distributor-services", getUserDistributorServicesController); // /api/v1/service/all-user-distributor-services
 app.get("/all-services", adminOnly, getAllServicesController); // /api/v1/service/all-user-distributor-services
 app.get("/search", searchServicesController); // /api/v1/service/search
 app.put("/:id", adminOrDistributorOnly, deleteDistributorServiceController); // /api/v1/service/:id
