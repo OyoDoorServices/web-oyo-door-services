@@ -12,11 +12,11 @@ import {
 } from "./types/reducerTypes";
 import { userExist } from "./redux/reducer/userReducer";
 import AddService from "./pages/AddService";
+import Services from "./pages/services";
+import Address from "./pages/address";
 //lazy loading
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
-const Services = lazy(() => import("./pages/Services"));
-const Address = lazy(() => import("./pages/Address"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 
