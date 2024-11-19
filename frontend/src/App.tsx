@@ -11,12 +11,14 @@ import {
   userReducerInitialState,
 } from "./types/reducerTypes";
 import { userExist } from "./redux/reducer/userReducer";
-import Profile from "./pages/Profile";
+import AddService from "./pages/AddService";
 //lazy loading
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
 const Services = lazy(() => import("./pages/Services"));
 const Address = lazy(() => import("./pages/Address"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
 function App() {
   const dispatch = useDispatch();
@@ -80,10 +82,40 @@ function App() {
             <Route
               path="/profile"
               element={
+                <ProtectedRoute isAuthenticated={user ? true : false}>
+                  <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
                 <ProtectedRoute
                   isAuthenticated={user ? true : false}
+                  adminOrDistributorRoute={true}
+                  isAdminOrDistributor={
+                    user?.role === "admin" || user?.role === "distributor"
+                      ? true
+                      : false
+                  }
                 >
-                  <Profile />
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/add-service"
+              element={
+                <ProtectedRoute
+                  isAuthenticated={user ? true : false}
+                  adminOrDistributorRoute={true}
+                  isAdminOrDistributor={
+                    user?.role === "admin" || user?.role === "distributor"
+                      ? true
+                      : false
+                  }
+                >
+                  <AddService />
                 </ProtectedRoute>
               }
             />

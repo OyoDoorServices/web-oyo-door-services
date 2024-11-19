@@ -13,7 +13,11 @@ export const newUserController = async (
     let user = await User.findOne({ email });
 
     if (user) {
-      if ((photo && user.photo.includes("googleusercontent.com")) || user.photo.includes("thumb_15951118880user_oihuo6.png")) {
+      if (
+        photo &&
+        (user.photo.includes("googleusercontent.com") ||
+          user.photo.includes("thumb_15951118880user_oihuo6.png"))
+      ) {
         user.photo = photo;
         await user.save();
       }
@@ -27,8 +31,6 @@ export const newUserController = async (
 
     if (!name || !email || !phoneNumber || !pincode)
       return next(new ErrorHandler("Please add all fields", 400));
-
-    const userPhoto = photo || "";
 
     user = await User.create({
       name,
@@ -51,19 +53,23 @@ export const newUserController = async (
   }
 };
 
-
-export const getUserController = async (req: Request,
+export const getUserController = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ): Promise<any> => {
   try {
     const { id } = req.params;
     if (!id) {
-      return res.status(400).json({ success: false, message: "User ID is required." });
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID is required." });
     }
     const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({ success: false, message: "User not found." });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found." });
     }
 
     return res.status(200).json({ success: true, user });
@@ -80,11 +86,8 @@ export const changeRoleController = async (
   try {
     const { role, email } = req.body;
 
-    const user = await User.findOneAndUpdate(
-      { email },
-      { role },
-      { new: true }
-    );
+    // Find the user whose role is being changed
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({
@@ -93,12 +96,35 @@ export const changeRoleController = async (
       });
     }
 
-    return res.status(201).json({
+    const conflictingUser = await User.findOne({
+      pincode: user.pincode,
+      role: { $in: ["admin", "distributor"] },
+      email: { $ne: email },
+    });
+
+    if (conflictingUser) {
+      return res.status(200).json({
+        success: false,
+        message: `Role cannot be changed. Pincode ${user.pincode} already has a user with the role of ${conflictingUser.role}.`,
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { email },
+      { role },
+      { new: true }
+    );
+
+    return res.status(200).json({
       success: true,
-      message: `${user.name}'s role changed to ${user.role}`,
+      message: `${updatedUser?.name}'s role changed to ${updatedUser?.role}`,
     });
   } catch (error) {
     console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
 
@@ -141,7 +167,7 @@ export const deleteUserController = async (
         message: "User has been deleted",
       });
     } else {
-      return res.status(403).json({
+      return res.status(200).json({
         success: false,
         message: "You are Unauthorized distributor for this user",
       });
@@ -182,7 +208,7 @@ export const updateUserProfileController = async (
       }
     }
 
-    let newPhotoUrl = user.photo; 
+    let newPhotoUrl = user.photo;
 
     if (photo) {
       const photoBase64 = photo.split(",")[1];
@@ -219,8 +245,6 @@ export const updateUserProfileController = async (
     });
   }
 };
-
-
 
 export const getAllUsersController = async (
   req: Request,

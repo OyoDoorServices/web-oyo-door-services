@@ -19,11 +19,13 @@ const Profile = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [processingOrders, setProcessingOrders] = useState([]);
   const [processedOrders, setProcessedOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let photoBase64 = photo;
     if (photoFile) {
+      setLoading(true)
       const reader = new FileReader();
       reader.onloadend = async () => {
         photoBase64 = reader.result as string;
@@ -58,13 +60,16 @@ const Profile = () => {
           } else {
             toast.error("Failed to update user details.");
           }
+          setLoading(false)
         } catch (error) {
+          setLoading(false)
           console.log("Error updating user details:", error);
-          toast.error("The file choosen is too large");
+          toast.error("Photo chosen is too large");
         }
       };
       reader.readAsDataURL(photoFile);
     } else {
+      setLoading(true)
       try {
         const response = await axios.put(
           `${import.meta.env.VITE_SERVER}/api/v1/user/update-user-profile?id=${
@@ -95,7 +100,9 @@ const Profile = () => {
         } else {
           toast.error("Failed to update user details.");
         }
+        setLoading(false)
       } catch (error) {
+        setLoading(false)
         console.error("Error updating user details:", error);
         toast.error("An error occurred while updating the details.");
       }
@@ -156,7 +163,6 @@ const Profile = () => {
                 type="file"
                 id="photo"
                 ref={fileInputRef}
-                className="hidden"
                 onChange={handleFileChange}
                 accept="image/*"
               />
@@ -212,8 +218,8 @@ const Profile = () => {
             />
           </div>
 
-          <button type="submit" className="profile-submit-button">
-            Update
+          <button type="submit" className="profile-submit-button" disabled={loading}>
+            {loading ? "Updating..." : "Update"}
           </button>
         </form>
       </div>

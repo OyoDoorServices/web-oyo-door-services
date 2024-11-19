@@ -1,6 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { Order } from "../modals/Order";
 import { User } from "../modals/User";
+import {
+  sendMailOrderDetailsClient,
+  sendMailOrderDetailsDistributor,
+} from "../utils/features";
+import { Service } from "../modals/Service";
 
 export const newOrderController = async (
   req: Request,
@@ -9,6 +14,7 @@ export const newOrderController = async (
 ): Promise<any> => {
   try {
     const userId = req.params.id;
+    const user = await User.findById(userId).select("name email phoneNumber");
     const {
       serviceIds,
       address,
@@ -16,6 +22,11 @@ export const newOrderController = async (
       state,
       pincode: orderPincode,
     } = req.body;
+
+    const services = await Service.find({
+      _id: { $in: serviceIds },
+    }).select("name");
+    const serviceNames = services.map((service) => service.name);
 
     const distributor = await User.findOne({
       role: { $in: ["admin", "distributor"] },
@@ -43,6 +54,23 @@ export const newOrderController = async (
 
     await newOrder.save();
 
+    sendMailOrderDetailsDistributor(
+      user!.name,
+      address,
+      distributor!.email,
+      serviceNames,
+      user!.phoneNumber,
+      process.env.SUBJECT_ORDER_CONFIRMATION_DISTRIBUTOR!,
+      process.env.TEXT_ORDER_CONFIRMATION_DISTRIBUTOR!
+    );
+    sendMailOrderDetailsClient(
+      user!.name,
+      user!.email,
+      serviceNames,
+      distributor.phoneNumber,
+      process.env.SUBJECT_ORDER_CONFIRMATION_CLIENT!,
+      process.env.TEXT_ORDER_CONFIRMATION_CLIENT!
+    );
     return res.status(201).json({
       success: true,
       order: newOrder,
@@ -66,7 +94,7 @@ export const deleteOrderController = async (
       });
     }
 
-    const deletedOrder = await Order.findByIdAndDelete(id);
+    const deletedOrder = await Order.findByIdAndDelete(id, { new: true });
 
     if (!deletedOrder) {
       return res.status(404).json({
@@ -89,9 +117,7 @@ export const getDistributorOrdersController = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { id, status, page = 1 } = req.query;
-    const limit = 12;
-    const skip = (Number(page) - 1) * limit;
+    const { id } = req.query;
 
     if (!id) {
       return res.status(404).json({
@@ -101,31 +127,23 @@ export const getDistributorOrdersController = async (
     }
 
     const filter: any = { distributorId: id };
-    if (status) {
-      filter.status = status;
-    }
-
-    const totalOrders = await Order.countDocuments(filter);
     const distributorOrders = await Order.find(filter)
-      .populate<{ userId: { name: string; phoneNumber: number; photo: string } }>(
-        "userId",
-        "name phoneNumber photo"
-      )
-      .populate<{ serviceIds: { name: string }[] }>("serviceIds", "name")
-      .limit(limit)
-      .skip(skip);
+      .populate<{
+        userId: { name: string; phoneNumber: number; photo: string };
+      }>("userId", "name phoneNumber photo")
+      .populate<{ serviceIds: { name: string }[] }>("serviceIds", "name");
 
     if (distributorOrders.length === 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
-        message: "No orders found for this Distributor",
+        distributorOrders,
       });
     }
 
     const formattedOrders = distributorOrders.map((order) => ({
       orderDate: order.orderDate,
       status: order.status,
-      orderId:order._id,
+      orderId: order._id,
       user: {
         name: order.userId?.name,
         phoneNumber: order.userId?.phoneNumber,
@@ -141,8 +159,6 @@ export const getDistributorOrdersController = async (
     return res.status(200).json({
       success: true,
       distributorOrders: formattedOrders,
-      currentPage: Number(page),
-      totalPages: Math.ceil(totalOrders / limit),
     });
   } catch (error) {
     console.log(error);
@@ -168,14 +184,11 @@ export const getUserOrdersController = async (
       userId: string;
     } = { userId: id as string };
 
-
     const totalOrders = await Order.countDocuments(filter);
 
-    const userOrders = await Order.find(filter)
-      .populate<{ serviceIds: { name: string; photo: string }[] }>(
-        "serviceIds",
-        "name photo"
-      )
+    const userOrders = await Order.find(filter).populate<{
+      serviceIds: { name: string; photo: string }[];
+    }>("serviceIds", "name photo");
 
     if (userOrders.length === 0) {
       return res.status(404).json({
@@ -221,7 +234,8 @@ export const changeOrderStatusController = async (
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: "Invalid status. Allowed statuses are 'processing' or 'processed'",
+        message:
+          "Invalid status. Allowed statuses are 'processing' or 'processed'",
       });
     }
 

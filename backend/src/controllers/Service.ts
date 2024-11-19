@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Service } from "../modals/Service";
 import { Provider } from "../modals/Provider";
 import { User } from "../modals/User";
+import { uploadToCloudinary } from "../utils/features";
 
 export const newServiceController = async (
   req: Request,
@@ -42,8 +43,25 @@ export const newServiceController = async (
         message: "Service linked to distributor.",
       });
     }
+    let PhotoUrl;
+    if (photo) {
+      const photoBase64 = photo.split(",")[1];
+      if (photoBase64) {
+        const uploadedPhoto = await uploadToCloudinary([
+          {
+            buffer: Buffer.from(photoBase64, "base64"),
+            mimetype: photo.split(";")[0].split(":")[1],
+          },
+        ]);
+        PhotoUrl = uploadedPhoto[0].url;
+      }
+    }
 
-    const newService = await Service.create({ name, photo, description });
+    const newService = await Service.create({
+      name,
+      photo: PhotoUrl,
+      description,
+    });
 
     if (provider) {
       provider.serviceIds.push(newService._id);
@@ -88,9 +106,9 @@ export const getDistributorServicesController = async (
     });
 
     if (!distributor) {
-      return res.status(404).json({
+      return res.status(200).json({
         success: false,
-        message: "Distributor not found",
+        message: "You haven't added any services yet",
       });
     }
 
@@ -109,7 +127,6 @@ export const getDistributorServicesController = async (
     console.log(error);
   }
 };
-
 
 export const getUserDistributorServicesController = async (
   req: Request,
@@ -136,15 +153,14 @@ export const getUserDistributorServicesController = async (
 
     const services = await Provider.findOne({
       distributorId: distributor._id,
-    })
-      .populate({
-        path: "serviceIds",
-        model: "Service",
-        options: {
-          limit,
-          skip,
-        },
-      });
+    }).populate({
+      path: "serviceIds",
+      model: "Service",
+      options: {
+        limit,
+        skip,
+      },
+    });
 
     if (!services || !services.serviceIds.length) {
       return res.status(404).json({
@@ -164,7 +180,7 @@ export const getUserDistributorServicesController = async (
       });
     }
 
-    const totalServices = provider.serviceIds.length
+    const totalServices = provider.serviceIds.length;
 
     return res.status(200).json({
       success: true,
@@ -176,7 +192,6 @@ export const getUserDistributorServicesController = async (
     console.log(error);
   }
 };
-
 
 export const getAllServicesController = async (
   req: Request,
@@ -194,7 +209,9 @@ export const getAllServicesController = async (
 
     const servicesWithProviders = await Promise.all(
       services.map(async (service) => {
-        const providers = await Provider.find({ serviceIds: service._id }).populate<{
+        const providers = await Provider.find({
+          serviceIds: service._id,
+        }).populate<{
           distributorId: { name: string; phoneNumber: number };
         }>({
           path: "distributorId",
@@ -342,7 +359,9 @@ export const searchServicesController = async (
       });
     }
 
-    const providers = await Provider.find({ distributorId: distributor._id }).populate({
+    const providers = await Provider.find({
+      distributorId: distributor._id,
+    }).populate({
       path: "serviceIds",
       model: "Service",
       match: {
@@ -352,7 +371,7 @@ export const searchServicesController = async (
 
     const availableServices = providers
       .flatMap((provider) => provider.serviceIds)
-      .filter((service) => service); 
+      .filter((service) => service);
 
     if (availableServices.length === 0) {
       return res.status(404).json({

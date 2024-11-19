@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -33,7 +34,7 @@ const Footer = () => {
             <li>Company</li>
             <li>Careers</li>
             <li>Press</li>
-            <li>Contact</li>
+            <li>Contact Us:-<Link to={"/"} style={{color:"blue"}}> 8309929086</Link></li>
           </ul>
         </div>
         <div className="footer-section">
